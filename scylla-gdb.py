@@ -5652,14 +5652,14 @@ class scylla_sstable_summary(gdb.Command):
             sst_ptr = arg.address
         
         try:
-            metadata = f"gen={sst['_generation']}, ver={sst['_version']}, state={sst['_state']}, origin={sst['_origin']}"
+            metadata = f"generation: {sst['_generation']}, version: {sst['_version']}, state: {sst['_state']}, origin: {sst['_origin']}"
             gdb.write(f"(sstable::sstable*) {sst_ptr} [{metadata}]\n")
         except gdb.error:
             gdb.write(f"(sstable::sstable*) {sst_ptr} []\n")
 
         components = seastar_lw_shared_ptr(sst['_components']['_value']).get().dereference()
 
-        for comp_name in ['filter','statistics','compression','scylla_metadata']:
+        for comp_name in ['filter', 'statistics', 'compression', 'scylla_metadata']:
             comp_ptr = components[comp_name].address
             gdb.write(f"  (sstable::{comp_name}*) {comp_ptr}\n")
 
@@ -5668,10 +5668,10 @@ class scylla_sstable_summary(gdb.Command):
                        ('_data_file', ['_data_file', '_file_impl', '_b']),
                        ('_index_file', ['_index_file', '_file_impl', '_b'])]:
             try:
-                val = sst
+                value = sst
                 for p in path:
-                    val = val[p]
-                gdb.write(f"    {name}: {val}\n")
+                    value = value[p]
+                gdb.write(f"    {name}: {value}\n")
             except:
                 pass
         gdb.write('\n')
